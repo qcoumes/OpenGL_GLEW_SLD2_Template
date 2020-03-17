@@ -23,9 +23,11 @@ namespace opengl {
             
             ~Window();
             
-            void handleWindowEvent(const SDL_WindowEvent &event, Camera &camera);
-            
             void refresh();
+            
+            [[nodiscard]] SDL_Window *getWindow() const;
+            
+            [[nodiscard]] SDL_GLContext getContext() const;
             
             [[nodiscard]] SDL_DisplayMode getDisplayMode() const;
     };

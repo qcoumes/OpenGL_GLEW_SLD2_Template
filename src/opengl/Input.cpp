@@ -68,10 +68,11 @@ namespace opengl {
     
     
     void Input::handleWindowEvent(SDL_WindowEvent event) {
+        this->end = event.event == SDL_WINDOWEVENT_CLOSE;
     }
     
     
-    void Input::handleInput() {
+    void Input::reset() {
         for (auto entry: this->buttons) {
             entry.second.reset();
         }
@@ -79,36 +80,36 @@ namespace opengl {
             entry.second.reset();
         }
         this->wheelMotion = { 0, 0 };
-        
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_MOUSEMOTION:
-                    this->handleMouseMotion(event.motion);
-                    break;
-                
-                case SDL_MOUSEBUTTONDOWN:
-                case SDL_MOUSEBUTTONUP:
-                    this->handleMouseButton(event.button);
-                    break;
-                
-                case SDL_MOUSEWHEEL:
-                    this->handleMouseWheel(event.wheel);
-                    break;
-                
-                case SDL_KEYDOWN:
-                case SDL_KEYUP:
-                    this->handleKeyboard(event.key);
-                    break;
-                
-                case SDL_WINDOWEVENT:
-                    this->handleWindowEvent(event.window);
-                    break;
-                
-                case SDL_QUIT:
-                    this->end = true;
-                    break;
-            }
+    }
+    
+    
+    void Input::handleInput(const SDL_Event &event) {
+        switch (event.type) {
+            case SDL_MOUSEMOTION:
+                this->handleMouseMotion(event.motion);
+                break;
+            
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                this->handleMouseButton(event.button);
+                break;
+            
+            case SDL_MOUSEWHEEL:
+                this->handleMouseWheel(event.wheel);
+                break;
+            
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                this->handleKeyboard(event.key);
+                break;
+            
+            case SDL_WINDOWEVENT:
+                this->handleWindowEvent(event.window);
+                break;
+            
+            case SDL_QUIT:
+                this->end = true;
+                break;
         }
     }
     

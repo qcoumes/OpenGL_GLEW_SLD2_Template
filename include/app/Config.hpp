@@ -11,9 +11,9 @@
 #include <opengl/Camera.hpp>
 
 
-namespace opengl {
+namespace app {
     
-    enum struct Framerate : GLbyte {
+    enum Framerate {
         FRAMERATE_60,
         FRAMERATE_75,
         FRAMERATE_120,
@@ -21,12 +21,13 @@ namespace opengl {
         FRAMERATE_180,
         FRAMERATE_240,
         FRAMERATE_VSYNC,
-        FRAMERATE_UNCAPPED
+        FRAMERATE_UNCAPPED,
+        FRAMERATE_LAST = FRAMERATE_UNCAPPED
     };
     
     
     
-    class Config : public util::ISingleton {
+    class Config : public opengl::util::ISingleton {
         
         public:
             static constexpr GLuint TICK_PER_SEC = 60;
@@ -39,11 +40,14 @@ namespace opengl {
             GLint width;  /**< Width of the window. */
             GLint height; /**< Height of the window. */
             
-            GLfloat mouseSensitivity = 0.10f; /**< Sensitivity of the mouse, default to 0.5. */
-            GLfloat fov = 70;      /**< Field of view, default to 70. */
-            GLuint framerate = 0;  /**< Framerate value, default to 0 (uncapped). */
-            GLuint usPerFrame = 0; /**< Number of microseconds between frame. */
-            Framerate framerateOpt = Framerate::FRAMERATE_VSYNC;  /**< Chosen Framerate, default to VSYNC. */
+            GLfloat mouseSensitivity = 0.10f; /**< Sensitivity of the mouse. */
+            GLfloat speed = 0.1f; /**< Speed of the camera. */
+            GLfloat fov = 70;          /**< Field of view, default to 70. */
+            
+            GLuint framerate = 0;      /**< Framerate value. */
+            GLuint vSyncFramerate = 0; /**< Framerate when VSYNC is enable. */
+            GLuint usPerFrame = 0;     /**< Number of microseconds between frame. */
+            Framerate framerateOpt = Framerate::FRAMERATE_VSYNC;  /**< Chosen Framerate. */
             
             GLboolean faceCulling = true;      /**< Whether face culling is enabled. */
             GLboolean occlusionCulling = true; /**< Whether occlusion culling is enabled. */
@@ -56,7 +60,7 @@ namespace opengl {
             
             static Config *getInstance();
             
-            void init(const Window &window, Camera &camera);
+            void init(const opengl::Window &window, opengl::Camera &camera);
             
             void setOpenGlVersion(const std::string &openGlVersion);
             
@@ -65,16 +69,18 @@ namespace opengl {
             void setCpuInfo(const std::string &cpuinfo);
             
             void setMouseSensitivity(GLfloat mouseSensitivity);
-        
+            
+            void setSpeed(GLfloat speed);
+            
             void setWidth(GLint width);
-        
+            
             void setHeight(GLint height);
             
-            void setFramerate(Framerate framerate, const Window &window);
+            void setFramerate(Framerate framerate);
             
-            void cycleFramerate(const Window &window);
+            void cycleFramerate();
             
-            void setFov(GLfloat fov, const Window &window, Camera &camera);
+            void setFov(GLfloat fov, const opengl::Window &window, opengl::Camera &camera);
             
             void setFaceCulling(GLboolean faceCulling);
             
@@ -100,6 +106,8 @@ namespace opengl {
             
             [[nodiscard]] GLfloat getMouseSensitivity() const;
             
+            [[nodiscard]] GLfloat getSpeed() const;
+            
             [[nodiscard]] GLint getWidth() const;
             
             [[nodiscard]] GLint getHeight() const;
@@ -108,7 +116,9 @@ namespace opengl {
             
             [[nodiscard]] GLuint getFramerateInv() const;
             
-            [[nodiscard]] std::string getFramerateString() const;
+            [[nodiscard]] Framerate getFramerateOpt() const;
+            
+            [[nodiscard]] std::string getFramerateString(GLint fps = -1) const;
             
             [[nodiscard]] GLfloat getFov() const;
             

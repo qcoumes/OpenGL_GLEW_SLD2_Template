@@ -6,9 +6,9 @@
 #include <opengl/util/ISingleton.hpp>
 
 
-namespace opengl {
+namespace app {
     
-    class Stats : public util::ISingleton {
+    class Stats : public opengl::util::ISingleton {
         
         public:
             GLuint fps;

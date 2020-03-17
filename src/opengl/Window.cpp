@@ -3,7 +3,6 @@
 #include <SDL.h>
 
 #include <opengl/Window.hpp>
-#include <opengl/Config.hpp>
 
 
 namespace opengl {
@@ -25,7 +24,10 @@ namespace opengl {
         if (this->context == nullptr) {
             throw std::runtime_error(SDL_GetError());
         }
+        
+        SDL_GL_MakeCurrent(this->window, this->context);
     }
+    
     
     Window::Window(const char *title, int32_t width, int32_t height, uint32_t flags) {
         if (0 != SDL_Init(SDL_INIT_VIDEO)) {
@@ -44,6 +46,8 @@ namespace opengl {
         if (this->context == nullptr) {
             throw std::runtime_error(SDL_GetError());
         }
+        
+        SDL_GL_MakeCurrent(this->window, this->context);
     }
     
     
@@ -53,30 +57,18 @@ namespace opengl {
     }
     
     
-    void Window::handleWindowEvent(const SDL_WindowEvent &event, Camera &camera) {
-        if (event.windowID != SDL_GetWindowID(this->window)) {
-            return;
-        }
-        
-        switch (event.type) {
-            case SDL_WINDOWEVENT_RESIZED:
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
-                camera.setProjectionMatrix(Config::getInstance()->getFov(), event.data1, event.data2);
-                break;
-            
-            case SDL_WINDOWEVENT_FOCUS_GAINED:
-                SDL_SetRelativeMouseMode(SDL_TRUE);
-                break;
-            
-            case SDL_WINDOWEVENT_FOCUS_LOST:
-                SDL_SetRelativeMouseMode(SDL_FALSE);
-                break;
-        }
+    void Window::refresh() {
+        SDL_GL_SwapWindow(this->window);
     }
     
     
-    void Window::refresh() {
-        SDL_GL_SwapWindow(this->window);
+    SDL_Window *Window::getWindow() const {
+        return this->window;
+    }
+    
+    
+    SDL_GLContext Window::getContext() const {
+        return this->context;
     }
     
     

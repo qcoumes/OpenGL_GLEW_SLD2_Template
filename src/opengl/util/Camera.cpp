@@ -1,7 +1,7 @@
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <opengl/Config.hpp>
+#include <opengl/Camera.hpp>
 
 
 #ifndef M_PIf32
@@ -21,7 +21,11 @@ namespace opengl {
     
     
     void Camera::computeDirectionVectors() {
-        this->frontVector = { cos(this->pitch) * sin(this->yaw), sin(this->pitch), cos(this->pitch) * cos(this->yaw) };
+        this->frontVector = {
+                std::cos(this->pitch) * std::sin(this->yaw),
+                std::sin(this->pitch),
+                std::cos(this->pitch) * std::cos(this->yaw)
+        };
         this->leftVector = { std::sin(this->yaw + M_PI_2f32), 0.f, std::cos(this->yaw + M_PI_2f32) };
         this->upVector = glm::cross(this->frontVector, this->leftVector);
     }
@@ -43,13 +47,13 @@ namespace opengl {
     
     
     void Camera::rotateLeft(float degrees) {
-        this->yaw += glm::radians(degrees * Config::getInstance()->getMouseSensitivity());
+        this->yaw += glm::radians(degrees);
         computeDirectionVectors();
     }
     
     
     void Camera::rotateUp(float degrees) {
-        this->pitch += glm::radians(degrees * Config::getInstance()->getMouseSensitivity());
+        this->pitch += glm::radians(degrees);
         this->pitch = std::max(std::min(this->pitch, M_PI_2f32), -M_PI_2f32);
         computeDirectionVectors();
     }

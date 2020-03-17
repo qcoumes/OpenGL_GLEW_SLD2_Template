@@ -4,10 +4,10 @@
 #include <SDL_mouse.h>
 #include <cpuid/libcpuid.h>
 
-#include <opengl/Config.hpp>
+#include <app/Config.hpp>
 
 
-namespace opengl {
+namespace app {
     
     Config *Config::getInstance() {
         static Config config;
@@ -15,17 +15,19 @@ namespace opengl {
     }
     
     
-    void Config::init(const Window &window, Camera &camera) {
+    void Config::init(const opengl::Window &window, opengl::Camera &camera) {
         this->setOpenGlVersion(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
         this->setGlewVersion(reinterpret_cast<const char *>(glewGetString(GLEW_VERSION)));
-        this->setFramerate(Framerate::FRAMERATE_VSYNC, window);
+        this->setFramerate(Framerate::FRAMERATE_VSYNC);
         this->setFov(70, window, camera);
         this->setFaceCulling(true);
         
         SDL_DisplayMode display = window.getDisplayMode();
         this->width = display.w;
         this->height = display.h;
-        SDL_SetRelativeMouseMode(SDL_TRUE);
+        GLuint fps = static_cast<GLuint>(window.getDisplayMode().refresh_rate);
+        this->vSyncFramerate = fps ? fps : 60;
+        this->setFramerate(FRAMERATE_VSYNC);
         
         struct cpu_raw_data_t raw {};
         struct cpu_id_t data {};
@@ -80,6 +82,16 @@ namespace opengl {
     }
     
     
+    GLfloat Config::getSpeed() const {
+        return this->speed;
+    }
+    
+    
+    void Config::setSpeed(GLfloat speed) {
+        this->speed = speed;
+    }
+    
+    
     void Config::setWidth(GLint width) {
         this->width = width;
     }
@@ -110,8 +122,17 @@ namespace opengl {
     }
     
     
-    std::string Config::getFramerateString() const {
-        switch (this->framerateOpt) {
+    Framerate Config::getFramerateOpt() const {
+        return this->framerateOpt;
+    }
+    
+    
+    std::string Config::getFramerateString(GLint fps) const {
+        if (fps == -1) {
+            fps = this->framerateOpt;
+        }
+        
+        switch (fps) {
             case Framerate::FRAMERATE_60:
                 return "60";
             case Framerate::FRAMERATE_75:
@@ -125,16 +146,16 @@ namespace opengl {
             case Framerate::FRAMERATE_240:
                 return "240";
             case Framerate::FRAMERATE_VSYNC:
-                return std::to_string(this->framerate) + " (VSYNC)";
+                return std::to_string(this->vSyncFramerate) + " (VSYNC)";
             case Framerate::FRAMERATE_UNCAPPED:
                 return "Uncapped";
+            default:
+                return "Unknown";
         }
     }
     
     
-    void Config::setFramerate(Framerate framerate, const Window &window) {
-        GLuint fps;
-        
+    void Config::setFramerate(Framerate framerate) {
         this->framerateOpt = framerate;
         
         switch (framerate) {
@@ -163,8 +184,7 @@ namespace opengl {
                 this->usPerFrame = static_cast<GLuint>(1. / 240. * 1e6);
                 break;
             case Framerate::FRAMERATE_VSYNC:
-                fps = static_cast<GLuint>(window.getDisplayMode().refresh_rate);
-                this->framerate = fps ? fps : 60;
+                this->framerate = this->vSyncFramerate;
                 this->usPerFrame = static_cast<GLuint>(1. / this->framerate * 1e6);
                 break;
             case Framerate::FRAMERATE_UNCAPPED:
@@ -175,31 +195,31 @@ namespace opengl {
     }
     
     
-    void Config::cycleFramerate(const Window &window) {
+    void Config::cycleFramerate() {
         switch (this->framerateOpt) {
             case Framerate::FRAMERATE_60:
-                this->setFramerate(Framerate::FRAMERATE_75, window);
+                this->setFramerate(Framerate::FRAMERATE_75);
                 break;
             case Framerate::FRAMERATE_75:
-                this->setFramerate(Framerate::FRAMERATE_120, window);
+                this->setFramerate(Framerate::FRAMERATE_120);
                 break;
             case Framerate::FRAMERATE_120:
-                this->setFramerate(Framerate::FRAMERATE_144, window);
+                this->setFramerate(Framerate::FRAMERATE_144);
                 break;
             case Framerate::FRAMERATE_144:
-                this->setFramerate(Framerate::FRAMERATE_180, window);
+                this->setFramerate(Framerate::FRAMERATE_180);
                 break;
             case Framerate::FRAMERATE_180:
-                this->setFramerate(Framerate::FRAMERATE_240, window);
+                this->setFramerate(Framerate::FRAMERATE_240);
                 break;
             case Framerate::FRAMERATE_240:
-                this->setFramerate(Framerate::FRAMERATE_VSYNC, window);
+                this->setFramerate(Framerate::FRAMERATE_VSYNC);
                 break;
             case Framerate::FRAMERATE_VSYNC:
-                this->setFramerate(Framerate::FRAMERATE_UNCAPPED, window);
+                this->setFramerate(Framerate::FRAMERATE_UNCAPPED);
                 break;
             case Framerate::FRAMERATE_UNCAPPED:
-                this->setFramerate(Framerate::FRAMERATE_60, window);
+                this->setFramerate(Framerate::FRAMERATE_60);
                 break;
         }
     }
@@ -210,7 +230,7 @@ namespace opengl {
     }
     
     
-    void Config::setFov(GLfloat fov, const Window &window, Camera &camera) {
+    void Config::setFov(GLfloat fov, const opengl::Window &window, opengl::Camera &camera) {
         this->fov = fov;
         SDL_DisplayMode display = window.getDisplayMode();
         camera.setProjectionMatrix(fov, display.w, display.h);

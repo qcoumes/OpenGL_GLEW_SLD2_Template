@@ -71,7 +71,9 @@ namespace opengl {
             
             Input() = default;
             
-            void handleInput();
+            void reset();
+            
+            void handleInput(const SDL_Event &event);
             
             [[nodiscard]] GLboolean isPressedButton(uint8_t button) const;
             

@@ -10,32 +10,36 @@
 #include <opengl/Window.hpp>
 #include <opengl/Camera.hpp>
 #include <opengl/Input.hpp>
+#include <opengl/ImGuiHandler.hpp>
 
 
-namespace opengl {
+namespace app {
     
-    class Engine {
+    class Engine : public opengl::util::ISingleton {
         private:
             static constexpr GLuint64 TICK_PER_SEC = 60;
             static constexpr GLdouble MS_PER_TICK = 1. / TICK_PER_SEC * 1000.;
         
         private:
-            std::unique_ptr<Window> window = nullptr;
-            std::unique_ptr<Camera> camera = nullptr;
-            std::unique_ptr<Input> input = nullptr;
+            std::unique_ptr<opengl::ImGuiHandler> imGui = nullptr;
+            std::unique_ptr<opengl::Window> window = nullptr;
+            std::unique_ptr<opengl::Camera> camera = nullptr;
+            std::unique_ptr<opengl::Input> input = nullptr;
             
             std::chrono::steady_clock::time_point lastTick;
             GLboolean running = true;
             GLuint tickSecond = 0;
             GLuint tickCount = 0;
         
-            void debug(GLuint fps) const;
+            void debug() const;
         
             void _render() const;
         
+            Engine() = default;
+            
         public:
         
-            Engine() = default;
+            static Engine *getInstance();
         
             void init();
         
