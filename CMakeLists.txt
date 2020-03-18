@@ -46,7 +46,7 @@ INCLUDE_DIRECTORIES(
     ${INCLUDE_DIR}
 )
 
-SET(TARGET_NAME opengl)
+SET(TARGET_NAME app)
 ADD_EXECUTABLE(${TARGET_NAME} ${SOURCE_FILES} ${HEADER_FILES} ${SHADER_FILES})
 
 
@@ -94,6 +94,8 @@ ELSEIF (CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
         -Wno-weak-vtables
         -Wno-unknown-pragmas
         -Wno-exit-time-destructors
+        -Wno-sign-conversion
+        -Wno-sign-compare
     )
     IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0")
     ELSE ()

@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <iterator>
 
 #include <SDL_mouse.h>
 #include <cpuid/libcpuid.h>
@@ -15,9 +16,15 @@ namespace app {
     }
     
     
-    void Config::init(const opengl::Window &window, opengl::Camera &camera) {
-        this->setOpenGlVersion(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
-        this->setGlewVersion(reinterpret_cast<const char *>(glewGetString(GLEW_VERSION)));
+    void Config::init(const tool::Window &window, tool::Camera &camera) {
+        this->GPUInfo = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+        this->GPUDriver = reinterpret_cast<const char *>(glGetString(GL_VERSION));
+        this->GLEWVersion = reinterpret_cast<const char *>(glewGetString(GLEW_VERSION));
+        std::istringstream iss = std::istringstream(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)));
+        this->GPUExtensions = std::vector<std::string>(
+                std::istream_iterator<std::string> { iss },
+                std::istream_iterator<std::string>()
+        );
         this->setFramerate(Framerate::FRAMERATE_VSYNC);
         this->setFov(70, window, camera);
         this->setFaceCulling(true);
@@ -42,13 +49,18 @@ namespace app {
     }
     
     
-    std::string Config::getOpenGlVersion() const {
-        return this->OpenGLVersion;
+    std::string Config::getGPUDriver() const {
+        return this->GPUDriver;
     }
     
     
-    void Config::setOpenGlVersion(const std::string &openGlVersion) {
-        this->OpenGLVersion = openGlVersion;
+    std::string Config::getGPUInfo() const {
+        return this->GPUInfo;
+    }
+    
+    
+    std::vector<std::string> Config::getGPUExtensions() const {
+        return this->GPUExtensions;
     }
     
     
@@ -57,18 +69,8 @@ namespace app {
     }
     
     
-    void Config::setGlewVersion(const std::string &glewVersion) {
-        this->GLEWVersion = glewVersion;
-    }
-    
-    
     std::string Config::getCpuInfo() const {
         return this->CPUInfo;
-    }
-    
-    
-    void Config::setCpuInfo(const std::string &cpuInfo) {
-        this->CPUInfo = cpuInfo;
     }
     
     
@@ -230,10 +232,10 @@ namespace app {
     }
     
     
-    void Config::setFov(GLfloat fov, const opengl::Window &window, opengl::Camera &camera) {
+    void Config::setFov(GLfloat fov, const tool::Window &window, tool::Camera &camera) {
         this->fov = fov;
         SDL_DisplayMode display = window.getDisplayMode();
-        camera.setProjectionMatrix(fov, display.w, display.h);
+        camera.setProjMatrix(fov, display.w, display.h);
     }
     
     

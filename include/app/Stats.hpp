@@ -3,12 +3,12 @@
 
 #include <GL/glew.h>
 
-#include <opengl/util/ISingleton.hpp>
+#include <misc/ISingleton.hpp>
 
 
 namespace app {
     
-    class Stats : public opengl::util::ISingleton {
+    class Stats : public misc::ISingleton {
         
         public:
             GLuint fps;

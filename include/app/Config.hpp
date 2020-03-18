@@ -2,13 +2,14 @@
 #define OPENGL_CONFIG_HPP
 
 #include <string>
+#include <vector>
 
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
-#include <opengl/util/INonCopyable.hpp>
-#include <opengl/Window.hpp>
-#include <opengl/Camera.hpp>
+#include <misc/INonCopyable.hpp>
+#include <tool/Window.hpp>
+#include <tool/Camera.hpp>
 
 
 namespace app {
@@ -27,20 +28,22 @@ namespace app {
     
     
     
-    class Config : public opengl::util::ISingleton {
+    class Config : public misc::ISingleton {
         
         public:
             static constexpr GLuint TICK_PER_SEC = 60;
         
         private:
-            std::string OpenGLVersion; /**< Version of OpenGL. */
-            std::string GLEWVersion;   /**< Version of GLEW. */
-            std::string CPUInfo;       /**< CPU brand and core information. */
+            std::string GPUInfo;     /**< GPU brand information. */
+            std::string GPUDriver;   /**< Version of the GPU's driver. */
+            std::vector<std::string> GPUExtensions; /**< Version of the GPU's driver. */
+            std::string GLEWVersion; /**< Version of GLEW. */
+            std::string CPUInfo;     /**< CPU brand and core information. */
             
             GLint width;  /**< Width of the window. */
             GLint height; /**< Height of the window. */
             
-            GLfloat mouseSensitivity = 0.10f; /**< Sensitivity of the mouse. */
+            GLfloat mouseSensitivity = 0.50f; /**< Sensitivity of the mouse. */
             GLfloat speed = 0.1f; /**< Speed of the camera. */
             GLfloat fov = 70;          /**< Field of view, default to 70. */
             
@@ -60,13 +63,7 @@ namespace app {
             
             static Config *getInstance();
             
-            void init(const opengl::Window &window, opengl::Camera &camera);
-            
-            void setOpenGlVersion(const std::string &openGlVersion);
-            
-            void setGlewVersion(const std::string &GlewVersion);
-            
-            void setCpuInfo(const std::string &cpuinfo);
+            void init(const tool::Window &window, tool::Camera &camera);
             
             void setMouseSensitivity(GLfloat mouseSensitivity);
             
@@ -80,7 +77,7 @@ namespace app {
             
             void cycleFramerate();
             
-            void setFov(GLfloat fov, const opengl::Window &window, opengl::Camera &camera);
+            void setFov(GLfloat fov, const tool::Window &window, tool::Camera &camera);
             
             void setFaceCulling(GLboolean faceCulling);
             
@@ -98,7 +95,11 @@ namespace app {
             
             void switchDebug();
             
-            [[nodiscard]] std::string getOpenGlVersion() const;
+            [[nodiscard]] std::string getGPUInfo() const;
+            
+            [[nodiscard]] std::string getGPUDriver() const;
+            
+            [[nodiscard]] std::vector<std::string> getGPUExtensions() const;
             
             [[nodiscard]] std::string getGlewVersion() const;
             

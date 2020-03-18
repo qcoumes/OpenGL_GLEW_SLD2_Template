@@ -5,10 +5,12 @@
 
 #include <imgui/imgui.h>
 
+#include <tool/ImGuiHandler.hpp>
 #include <app/Engine.hpp>
 #include <app/Config.hpp>
 #include <app/Stats.hpp>
-#include <opengl/ImGuiHandler.hpp>
+#include <algorithm>
+#include <app/Cube.hpp>
 
 
 namespace app {
@@ -20,7 +22,7 @@ namespace app {
     
     
     void Engine::init() {
-        this->window = std::make_unique<opengl::Window>("OpenGL");
+        this->window = std::make_unique<tool::Window>("OpenGL");
         
         GLenum glewInitError = glewInit();
         if (GLEW_OK != glewInitError) {
@@ -28,14 +30,19 @@ namespace app {
         }
         
         this->lastTick = std::chrono::steady_clock::now();
-        this->camera = std::make_unique<opengl::Camera>();
-        this->input = std::make_unique<opengl::Input>();
-        this->imGui = std::make_unique<opengl::ImGuiHandler>(this->window->getWindow(), this->window->getContext());
+        this->camera = std::make_unique<tool::Camera>();
+        this->camera->moveForward(-5);
+        this->input = std::make_unique<tool::Input>();
+        this->imGui = std::make_unique<tool::ImGuiHandler>(this->window->getWindow(), this->window->getContext());
         Config::getInstance()->init(*this->window, *this->camera);
         
         glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+        
+        this->rendered.emplace("Cube", new Cube());
     }
     
     
@@ -58,6 +65,7 @@ namespace app {
         Config *config = Config::getInstance();
         GLfloat speed = config->getSpeed();
         SDL_Event event;
+        this->input->reset();
         
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -98,25 +106,33 @@ namespace app {
             this->camera->moveLeft(speed);
         }
         if (this->input->isHeldKey(SDL_SCANCODE_D)) {
-            this->camera->moveLeft(speed);
+            this->camera->moveLeft(-speed);
         }
         if (this->input->isHeldKey(SDL_SCANCODE_W)) {
             this->camera->moveForward(speed);
         }
         if (this->input->isHeldKey(SDL_SCANCODE_S)) {
-            this->camera->moveForward(speed);
+            this->camera->moveForward(-speed);
         }
         if (this->input->isHeldKey(SDL_SCANCODE_SPACE)) {
             this->camera->moveUp(speed);
         }
         if (this->input->isHeldKey(SDL_SCANCODE_LCTRL)) {
-            this->camera->moveUp(speed);
+            this->camera->moveUp(-speed);
         }
+        
+        // Camera rotation
+        glm::vec2 motion = this->input->getRelativeMotion();
+        GLfloat sensitivity = config->getMouseSensitivity();
+        this->camera->rotateLeft(-motion.x * sensitivity);
+        this->camera->rotateUp(-motion.y * sensitivity);
         
         // Toggle debug
         if (this->input->isReleasedKey(SDL_SCANCODE_F10)) {
             config->switchDebug();
         }
+        
+        std::for_each(this->rendered.begin(), this->rendered.end(), [](auto r) { r.second->update(); });
     }
     
     
@@ -157,10 +173,21 @@ namespace app {
             ImGui::Text("CPU:");
             ImGui::SameLine(offset);
             ImGui::Text("%s", config->getCpuInfo().c_str());
+            ImGui::Separator();
             
-            ImGui::Text("OpenGL Version:");
+            ImGui::Text("GPU:");
             ImGui::SameLine(offset);
-            ImGui::Text("%s", config->getOpenGlVersion().c_str());
+            ImGui::Text("%s", config->getGPUInfo().c_str());
+            ImGui::Text("Driver:");
+            ImGui::SameLine(offset);
+            ImGui::Text("%s", config->getGPUDriver().c_str());
+            if (ImGui::TreeNode("Extensions")) {
+                for (const std::string &s : config->getGPUExtensions()) {
+                    ImGui::BulletText("%s", s.c_str());
+                }
+                ImGui::TreePop();
+            }
+            ImGui::Separator();
             
             ImGui::Text("GLEW Version:");
             ImGui::SameLine(offset);
@@ -181,7 +208,15 @@ namespace app {
     
     
     void Engine::_render() const {
-        //        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        std::for_each(this->rendered.cbegin(), this->rendered.cend(), [](const auto r) { r.second->render(); });
+        
+        if (Config::getInstance()->getDebug()) {
+            this->debug();
+        }
+        
+        this->window->refresh();
     }
     
     
@@ -196,22 +231,15 @@ namespace app {
         if (Config::getInstance()->getFramerate() > 0) { // Capped framerate
             now = std::chrono::steady_clock::now();
             duration = std::chrono::duration_cast<std::chrono::microseconds>(now - limiterStart).count();
+            
             if (duration >= Config::getInstance()->getFramerateInv()) {
                 this->_render();
-                if (Config::getInstance()->getDebug()) {
-                    this->debug();
-                }
-                this->window->refresh();
                 limiterStart = now;
                 fps++;
             }
         }
         else { // Uncapped framerate
             this->_render();
-            if (Config::getInstance()->getDebug()) {
-                this->debug();
-            }
-            this->window->refresh();
             fps++;
         }
         
