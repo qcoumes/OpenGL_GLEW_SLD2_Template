@@ -140,6 +140,7 @@ namespace app {
         Config *config = Config::getInstance();
         Engine *engine = Engine::getInstance();
         glm::dvec3 position = engine->camera->getPosition();
+        glm::dvec3 lookingAt = engine->camera->getFrontVector();
         std::stringstream ss;
         GLint length;
         
@@ -166,6 +167,7 @@ namespace app {
         ss << "Tick: " << std::setfill('0') << std::setw(length) << engine->tickSecond << "/" << Config::TICK_PER_SEC;
         ImGui::Text("%s", ss.str().c_str());
         ImGui::Text("Position: (%.2f, %.2f, %.2f)", position.x, position.y, position.z);
+        ImGui::Text("Looking at: (%.2f, %.2f, %.2f)", lookingAt.x, lookingAt.y, lookingAt.z);
         ImGui::Dummy({ 0.0f, 6.0f });
         
         if (ImGui::CollapsingHeader("Hardware & Driver")) {
