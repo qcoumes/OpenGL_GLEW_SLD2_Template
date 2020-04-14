@@ -49,7 +49,7 @@ namespace tool {
             void setProjMatrix(float fov, int width, int height);
             
             [[nodiscard]] glm::mat4 getProjMatrix() const;
-        
+            
             [[nodiscard]] glm::vec3 getFrontVector() const;
     };
 }

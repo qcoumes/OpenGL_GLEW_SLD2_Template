@@ -31,4 +31,5 @@
 
 #include <shader/uniform/UniformSampler2D.hpp>
 
+
 #endif // OPENGL_UNIFORM_ALL_HPP

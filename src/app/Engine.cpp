@@ -236,7 +236,7 @@ namespace app {
         static GLuint fps = 0;
         
         std::chrono::steady_clock::time_point now;
-        double duration;
+        GLint64 duration;
         
         if (Config::getInstance()->getFramerate() > 0) { // Capped framerate
             now = std::chrono::steady_clock::now();
@@ -256,7 +256,7 @@ namespace app {
         // Computing FPS
         now = std::chrono::steady_clock::now();
         duration = std::chrono::duration_cast<std::chrono::seconds>(now - cmptStart).count();
-        if (duration >= 1.) {
+        if (duration >= 1) {
             Stats::getInstance()->fps = static_cast<GLuint>(fps);
             fps = 0;
             cmptStart = now;

@@ -1,11 +1,6 @@
 #include <algorithm>
-#include <stdexcept>
-#include <string>
 #include <iostream>
-#include <fstream>
-#include <cstring>
 
-#include <misc/Uuid.hpp>
 #include <shader/Shader.hpp>
 #include <shader/uniform/uniform_all.hpp>
 #include <misc/FileReader.hpp>

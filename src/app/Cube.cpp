@@ -3,7 +3,6 @@
 #include <shader/Texture.hpp>
 #include <app/Cube.hpp>
 #include <app/Engine.hpp>
-#include <iostream>
 
 
 namespace app {

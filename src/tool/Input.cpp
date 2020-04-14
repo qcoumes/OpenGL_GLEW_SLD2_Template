@@ -109,6 +109,9 @@ namespace tool {
             case SDL_QUIT:
                 this->end = true;
                 break;
+                
+            default:
+                break;
         }
     }
     

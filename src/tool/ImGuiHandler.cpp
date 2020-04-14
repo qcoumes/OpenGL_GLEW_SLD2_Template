@@ -1,5 +1,4 @@
 #include <SDL_events.h>
-#include <GL/glew.h>
 
 #include <tool/ImGuiHandler.hpp>
 
