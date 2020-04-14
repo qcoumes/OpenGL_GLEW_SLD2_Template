@@ -35,4 +35,4 @@ namespace tool {
     };
 }
 
-#endif //OPENGL_IMGUIHANDLER_HPP
+#endif // OPENGL_IMGUIHANDLER_HPP

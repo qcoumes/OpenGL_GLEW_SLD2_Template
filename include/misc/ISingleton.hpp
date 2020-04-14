@@ -24,4 +24,4 @@ namespace misc {
     };
 }
 
-#endif //OPENGL_ISINGLETON_HPP
+#endif // OPENGL_ISINGLETON_HPP

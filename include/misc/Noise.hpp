@@ -8,12 +8,14 @@
 namespace misc {
     
     /**
-     * Functor creating a fractal Brownian Motion (fBM) given noise function.
+     * Functor creating a fractal Brownian Motion (fBM) with the given noise function.
      *
      * fBm are amplitude and frequency modulated noise created by adding different iterations of noise (octaves),
      * where we successively increment the frequency in regular steps (lacunarity) and decrease the amplitude (gain).
      *
-     * @tparam T         Input type of the noise function.
+     * A good resource about fBm is https://thebookofshaders.com/13/
+     *
+     * @tparam T         Input type of the noise function usually.
      * @tparam PRECISION Precision used to compute the noise, must be a floating point type.
      * @tparam NOISE     Function used to create the noise.
      */
@@ -69,4 +71,4 @@ namespace misc {
     };
 }
 
-#endif //OPENGL_NOISE_HPP
+#endif // OPENGL_NOISE_HPP

@@ -15,4 +15,4 @@ namespace tool {
     };
 }
 
-#endif //OPENGL_RENDERED_HPP
+#endif // OPENGL_RENDERED_HPP

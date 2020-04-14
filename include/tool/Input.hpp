@@ -99,4 +99,4 @@ namespace tool {
     };
 }
 
-#endif //OPENGL_INPUTMANAGER_HPP
+#endif // OPENGL_INPUTMANAGER_HPP

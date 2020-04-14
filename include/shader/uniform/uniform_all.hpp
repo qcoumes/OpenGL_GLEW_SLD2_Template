@@ -29,5 +29,6 @@
 #include <shader/uniform/UniformMatrix4x3fv.hpp>
 #include <shader/uniform/UniformMatrix4x2fv.hpp>
 
+#include <shader/uniform/UniformSampler2D.hpp>
 
-#endif //OPENGL_UNIFORM_ALL_HPP
+#endif // OPENGL_UNIFORM_ALL_HPP

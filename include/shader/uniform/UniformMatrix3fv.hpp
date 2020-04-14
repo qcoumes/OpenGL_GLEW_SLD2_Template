@@ -16,4 +16,4 @@ namespace shader {
     };
 }
 
-#endif //OPENGL_UNIFORMMAXTRIX3_HPP
+#endif // OPENGL_UNIFORMMAXTRIX3_HPP

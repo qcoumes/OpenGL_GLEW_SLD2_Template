@@ -31,7 +31,8 @@ namespace app {
     class Config : public misc::ISingleton {
         
         public:
-            static constexpr GLuint TICK_PER_SEC = 60;
+            static constexpr GLint64 TICK_PER_SEC = 60;
+            static constexpr GLint64 MS_PER_TICK = static_cast<GLint64>(1. / TICK_PER_SEC * 1000.);
         
         private:
             std::string GPUInfo;     /**< GPU brand information. */
@@ -40,22 +41,23 @@ namespace app {
             std::string GLEWVersion; /**< Version of GLEW. */
             std::string CPUInfo;     /**< CPU brand and core information. */
             
-            GLint width;  /**< Width of the window. */
-            GLint height; /**< Height of the window. */
+            GLint width = 800;  /**< Width of the window. */
+            GLint height = 600; /**< Height of the window. */
             
-            GLfloat mouseSensitivity = 0.50f; /**< Sensitivity of the mouse. */
-            GLfloat speed = 0.1f; /**< Speed of the camera. */
-            GLfloat fov = 70;          /**< Field of view, default to 70. */
+            GLfloat mouseSensitivity = 1.f; /**< Sensitivity of the mouse. */
+            GLfloat speed = 0.2f;           /**< Speed of the camera. */
+            GLfloat fov = 70;               /**< Field of view, default to 70. */
             
             GLuint framerate = 0;      /**< Framerate value. */
             GLuint vSyncFramerate = 0; /**< Framerate when VSYNC is enable. */
             GLuint usPerFrame = 0;     /**< Number of microseconds between frame. */
             Framerate framerateOpt = Framerate::FRAMERATE_VSYNC;  /**< Chosen Framerate. */
             
+            GLboolean freeMouse = false;       /**< Allow to freely move the mouse. */
             GLboolean faceCulling = true;      /**< Whether face culling is enabled. */
             GLboolean occlusionCulling = true; /**< Whether occlusion culling is enabled. */
             GLboolean frustumCulling = true;   /**< Whether frustum culling is enabled. */
-            GLboolean debug = false;           /**< Whether debug display. */
+            GLboolean debug = true;            /**< Whether debug display. */
             
             Config() = default;
         
@@ -78,6 +80,10 @@ namespace app {
             void cycleFramerate();
             
             void setFov(GLfloat fov, const tool::Window &window, tool::Camera &camera);
+            
+            void setFreeMouse(GLboolean freeMouse);
+            
+            void switchFreeMouse();
             
             void setFaceCulling(GLboolean faceCulling);
             
@@ -122,6 +128,8 @@ namespace app {
             [[nodiscard]] std::string getFramerateString(GLint fps = -1) const;
             
             [[nodiscard]] GLfloat getFov() const;
+            
+            [[nodiscard]] GLboolean getFreeMouse() const;
             
             [[nodiscard]] GLboolean getFaceCulling() const;
             

@@ -3,7 +3,7 @@
 #include <iterator>
 
 #include <SDL_mouse.h>
-#include <cpuid/libcpuid.h>
+#include <libcpuid.h>
 
 #include <app/Config.hpp>
 
@@ -236,6 +236,22 @@ namespace app {
         this->fov = fov;
         SDL_DisplayMode display = window.getDisplayMode();
         camera.setProjMatrix(fov, display.w, display.h);
+    }
+    
+    
+    GLboolean Config::getFreeMouse() const {
+        return freeMouse;
+    }
+    
+    
+    void Config::setFreeMouse(GLboolean freeMouse) {
+        this->freeMouse = freeMouse;
+        SDL_SetRelativeMouseMode(freeMouse ? SDL_FALSE : SDL_TRUE);
+    }
+    
+    
+    void Config::switchFreeMouse() {
+        this->setFreeMouse(!this->freeMouse);
     }
     
     

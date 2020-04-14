@@ -27,4 +27,4 @@ namespace misc {
     };
 }
 
-#endif //OPENGL_INONCOPYABLE_HPP
+#endif // OPENGL_INONCOPYABLE_HPP

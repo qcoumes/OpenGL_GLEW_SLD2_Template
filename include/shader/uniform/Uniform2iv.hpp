@@ -16,4 +16,4 @@ namespace shader {
     };
 }
 
-#endif //OPENGL_UNIFORM2iv_HPP
+#endif // OPENGL_UNIFORM2iv_HPP

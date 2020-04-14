@@ -54,4 +54,4 @@ namespace tool {
     };
 }
 
-#endif //OPENGL_CAMERA_HPP
+#endif // OPENGL_CAMERA_HPP

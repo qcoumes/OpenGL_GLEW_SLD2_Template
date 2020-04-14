@@ -35,4 +35,4 @@ namespace misc {
     };
 }
 
-#endif //OPENGL_IMAGE_HPP
+#endif // OPENGL_IMAGE_HPP

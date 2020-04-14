@@ -1,5 +1,4 @@
 #include <shader/Texture.hpp>
-#include <iostream>
 
 
 namespace shader {

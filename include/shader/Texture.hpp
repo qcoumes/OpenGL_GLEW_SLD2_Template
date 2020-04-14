@@ -29,4 +29,4 @@ namespace shader {
     };
 }
 
-#endif //OPENGL_TEXTURE_HPP
+#endif // OPENGL_TEXTURE_HPP

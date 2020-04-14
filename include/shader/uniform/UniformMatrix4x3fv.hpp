@@ -16,4 +16,4 @@ namespace shader {
     };
 }
 
-#endif //OPENGL_UNIFORMMATRIX43_HPP
+#endif // OPENGL_UNIFORMMATRIX43_HPP

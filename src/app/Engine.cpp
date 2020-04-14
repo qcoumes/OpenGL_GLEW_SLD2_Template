@@ -48,12 +48,12 @@ namespace app {
     
     GLboolean Engine::tick() {
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        double duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->lastTick).count();
+        GLint64 duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->lastTick).count();
         
-        if (duration >= MS_PER_TICK) {
+        if (duration >= Config::MS_PER_TICK) {
             this->lastTick = now;
             this->tickCount++;
-            this->tickSecond = (this->tickSecond + 1) % TICK_PER_SEC;
+            this->tickSecond = (this->tickSecond + 1) % Config::TICK_PER_SEC;
             return true;
         }
         
@@ -122,11 +122,17 @@ namespace app {
         }
         
         // Camera rotation
-        glm::vec2 motion = this->input->getRelativeMotion();
-        GLfloat sensitivity = config->getMouseSensitivity();
-        this->camera->rotateLeft(-motion.x * sensitivity);
-        this->camera->rotateUp(-motion.y * sensitivity);
+        if (!config->getFreeMouse()) {
+            glm::vec2 motion = this->input->getRelativeMotion();
+            GLfloat sensitivity = config->getMouseSensitivity();
+            this->camera->rotateLeft(-motion.x * sensitivity);
+            this->camera->rotateUp(-motion.y * sensitivity);
+        }
         
+        // Toggle free mouse
+        if (this->input->isReleasedKey(SDL_SCANCODE_LALT)) {
+            config->switchFreeMouse();
+        }
         // Toggle debug
         if (this->input->isReleasedKey(SDL_SCANCODE_F10)) {
             config->switchDebug();
@@ -145,7 +151,7 @@ namespace app {
         GLint length;
         
         this->imGui->newFrame();
-        ImGui::SetNextWindowSize({ 600, 300 }, ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize({ 600, 300 }, ImGuiCond_Once);
         ImGui::Begin("Debug");
         ImGui::Text("FPS: %d /", Stats::getInstance()->fps);
         ImGui::SameLine();
@@ -162,6 +168,8 @@ namespace app {
             }
             ImGui::EndCombo();
         }
+        ImGui::SameLine();
+        tool::ImGuiHandler::HelpMarker("Can be overridden by your driver / OpenGL settings.");
         length = static_cast<GLint>(std::to_string(Config::TICK_PER_SEC).size());
         ss.str(std::string());
         ss << "Tick: " << std::setfill('0') << std::setw(length) << engine->tickSecond << "/" << Config::TICK_PER_SEC;
@@ -170,8 +178,8 @@ namespace app {
         ImGui::Text("Looking at: (%.2f, %.2f, %.2f)", lookingAt.x, lookingAt.y, lookingAt.z);
         ImGui::Dummy({ 0.0f, 6.0f });
         
-        if (ImGui::CollapsingHeader("Hardware & Driver")) {
-            GLint offset = 120;
+        if (ImGui::CollapsingHeader("Hardware & Driver", ImGuiTreeNodeFlags_DefaultOpen)) {
+            GLfloat offset = 120;
             ImGui::Text("CPU:");
             ImGui::SameLine(offset);
             ImGui::Text("%s", config->getCpuInfo().c_str());
@@ -196,7 +204,7 @@ namespace app {
             ImGui::Text("%s", config->getGlewVersion().c_str());
         }
         
-        if (ImGui::CollapsingHeader("Settings")) {
+        if (ImGui::CollapsingHeader("Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
             bool faceCulling = config->getFaceCulling();
             ImGui::Checkbox("Face Culling", &faceCulling);
             if (faceCulling != config->getFaceCulling()) {

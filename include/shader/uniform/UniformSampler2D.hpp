@@ -1,12 +1,12 @@
-#ifndef OPENGL_UNIFORMATRIX23_HPP
-#define OPENGL_UNIFORMATRIX23_HPP
+#ifndef OPENGL_UNIFORMSAMPLER2D_HPP
+#define OPENGL_UNIFORMSAMPLER2D_HPP
 
 #include <shader/uniform/IUniform.hpp>
 
 
 namespace shader {
     
-    class UniformMatrix2x3fv : public IUniform {
+    class UniformSampler2D : public IUniform {
         
         public:
             
@@ -16,4 +16,4 @@ namespace shader {
     };
 }
 
-#endif // OPENGL_UNIFORMATRIX23_HPP
+#endif // OPENGL_UNIFORMSAMPLER2D_HPP

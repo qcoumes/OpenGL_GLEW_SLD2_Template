@@ -180,6 +180,9 @@ namespace shader {
             case UNIFORM_MATRIX_4X3F:
                 uniform = std::make_shared<UniformMatrix4x3fv>(this->programId, name.c_str());
                 break;
+            case UNIFORM_SAMPLER2D:
+                uniform = std::make_shared<UniformSampler2D>(this->programId, name.c_str());
+                break;
         }
         
         this->uniforms.emplace(name, uniform);

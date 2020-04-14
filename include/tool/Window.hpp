@@ -33,4 +33,4 @@ namespace tool {
     };
 }
 
-#endif //OPENGL_WINDOW_HPP
+#endif // OPENGL_WINDOW_HPP

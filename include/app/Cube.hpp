@@ -45,4 +45,4 @@ namespace app {
     };
 }
 
-#endif //OPENGL_CUBE_HPP
+#endif // OPENGL_CUBE_HPP
