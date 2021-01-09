@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <chrono>
+#include <string>
 #include <memory>
 
 #include <GL/glew.h>
